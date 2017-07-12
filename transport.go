@@ -14,7 +14,9 @@ type Transport interface {
 	Exec(conn *Conn, q Query, readOnly bool) (res string, err error)
 }
 
-type HttpTransport struct{}
+type HttpTransport struct {
+	Database string
+}
 
 func (t HttpTransport) Exec(conn *Conn, q Query, readOnly bool) (res string, err error) {
 	var resp *http.Response

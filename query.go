@@ -40,31 +40,45 @@ func (q Query) Exec(conn *Conn) (err error) {
 }
 
 type Iter struct {
-	err  error
-	text string
+	colCnt  int64
+	err     error
+	text    string
+	current string
 }
 
 func (r *Iter) Error() error {
 	return r.err
 }
 
-func (r *Iter) Scan(vars ...interface{}) bool {
-	row := r.fetchNext()
-	if len(row) == 0 {
+func (r *Iter) Next() bool {
+	r.current = r.fetchNext()
+	if len(r.current) == 0 {
 		return false
 	}
-	a := strings.Split(row, "\t")
+	return true
+}
+
+func (r *Iter) ColumnCount() int {
+	return len(strings.Split(r.current, "\t"))
+}
+
+func (r *Iter) Scan(vars ...interface{}) error {
+	a := strings.Split(r.current, "\t")
 	if len(a) < len(vars) {
-		return false
+		return errors.New("len(a) < len(vars)")
 	}
 	for i, v := range vars {
 		err := unmarshal(v, a[i])
 		if err != nil {
 			r.err = err
-			return false
+			return err
 		}
 	}
-	return true
+	return nil
+}
+
+func (r *Iter) ScanRow(vars ...interface{}) error {
+	return nil
 }
 
 func (r *Iter) fetchNext() string {
