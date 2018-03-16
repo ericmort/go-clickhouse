@@ -14,11 +14,11 @@ type (
 	Array   []interface{}
 )
 
-func NewHttpTransport() HttpTransport {
-	return HttpTransport{}
+func NewHttpTransport() *HttpTransport {
+	return &HttpTransport{}
 }
 
-func NewConn(host string, t Transport) *Conn {
+func NewConn(host string, t *HttpTransport) *Conn {
 	host = "http://" + strings.Replace(host, "http://", "", 1)
 	host = strings.TrimRight(host, "/") + "/"
 

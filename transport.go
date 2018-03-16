@@ -10,10 +10,6 @@ const (
 	httpTransportBodyType = "text/plain"
 )
 
-type Transport interface {
-	Exec(conn *Conn, q Query, readOnly bool) (res string, err error)
-}
-
 type HttpTransport struct {
 	Database string
 }
