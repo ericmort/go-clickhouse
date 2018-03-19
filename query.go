@@ -63,6 +63,12 @@ func (r *Iter) ColumnCount() int {
 }
 
 func (r *Iter) Scan(vars ...interface{}) error {
+	// for Scans where vars is an []interface{} of one element , we need to massage it a bit
+	// this is the case when the number of columns is unknown at compile-time
+	_, ok := vars[0].([]interface{})
+	if ok {
+		vars = vars[0].([]interface{})
+	}
 	a := strings.Split(r.current, "\t")
 	if len(a) < len(vars) {
 		return errors.New("len(a) < len(vars)")
